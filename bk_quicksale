@@ -1,0 +1,259 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+	$( function() {
+		$( "#datetran" ).datepicker();
+  	} );
+</script>
+
+<?php
+function fill_services_select_box($pdo) {
+    $output = '';
+    $query = "SELECT * FROM product_master";
+    $statement = $pdo->prepare($query);
+    $statement->execute();
+    $result = $statement->fetchAll();
+
+    foreach($result as $row) {
+        $output .= '<option value="'.$row["product_id"].'">'.$row["prod_details"].'</option>';
+    }
+return $output;
+}
+
+function fill_employee_select_box($pdo) {
+    $output = '';
+    $query = "SELECT * FROM employee_master";
+    $statement = $pdo->prepare($query);
+    $statement->execute();
+    $result = $statement->fetchAll();
+
+    foreach($result as $row) {
+        $output .= '<option value="'.$row["specialist_id"].'">'.$row["emp_fname"].'</option>';
+    }
+return $output;
+}
+?>
+<div class="container" style="background-color:#f2f2f2">
+	<h3>Invoice</h3>
+	<br>
+</div>
+
+<form method="post" id="insert_form">
+	<div class="table-repsonsive">
+        <div class="form-group col-md-4">
+            <label for="customer">Customer</label>
+            <input class="form-control input-sm" placeholder="Search by Name" name="txtCustomer" size=8 id="customer" required>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="datetran">Date</label>
+            <input class="form-control input-sm" name="txtDateTran" id="datetran" required>
+        </div>
+        <div class="form-group col-md-6">&nbsp;</div>
+
+		<div class="form-group col-md-12"><span id="error"></span></div>
+		<table class="table table-stripped" id="item_table">
+            <tr>
+
+            </tr>
+			<tr>
+				<th>SERVICES</th>
+				<th>STAFF</th>
+				<th>QTY</th>
+				<th>AMOUNT</th>
+				<th>DISCOUNT</th>
+				<th>TOTAL</th>
+			</tr>
+		</table>
+		<div class="form-group col-md-12">
+			<button type="button" name="add" class="btn btn-success btn-sm add">
+				<span class="glyphicon glyphicon-plus"></span>&nbsp;Add Service
+			</button>
+		</div>
+	</div>
+	<div class="form-group col-md-9"></div>
+	<div class="form-group col-md-3">
+		<input type="submit" class="btn btn-default" value="Close" />
+		<input type="submit" name="submit" class="btn btn-info" value="Save" />
+	</div>
+    <div class="form-group col-md-3">
+        <label for="extra">Extra Charges/ Other(s)</label>
+        <input type="number" step="0.5" class="form-control input-sm" id="others_amount" name="txtExtra" value="0.00" onkeyup="compute_sales()">
+    </div>
+</form>
+
+<hr class="col-xs-12">
+<div class="form-group col-md-7">&nbsp;</div>
+<div class="form-group col-md-2">
+	<label for="extra">Grand Total</label>
+</div>
+<div class="form-group col-md-3">
+	<input class="form-control input-lg grand_total" name="grand_total" readonly="readonly">
+</div>
+<div class="form-group col-md-7">&nbsp;</div>
+<div class="form-group col-md-2">
+	<label for="extra">Paying Now</label>
+</div>
+<div class="form-group col-md-3">
+	<input class="form-control input-lg payment_amount" type="number" step="0.1" name="payment_amount" value="0.00" onkeyup="compute_sales()">
+</div>
+<div class="form-group col-md-7">&nbsp;</div>
+<div class="form-group col-md-2">
+	<label for="extra">Due Amount/Change</label>
+</div>
+<div class="form-group col-md-3">
+	<input class="form-control input-lg due_amount" name="txtExtra" id="extra" readonly="readonly">
+</div>
+<div id="result"></div>
+<script>
+    $(document).ready(function() {
+        $(document).on('click', '.add', function(){
+            var html = '';
+            html += '<tr class="txtMult">';
+            html += '<td width="15%"><select name="services[]" id="services" name="services" class="form-control services"><option value="">-Services-</option><?php echo fill_services_select_box($pdo); ?></select></td>';
+            html += '<td width="15%"><select name="specialists[]" class="form-control specialists"><option value="">-Select-</option><?php echo fill_employee_select_box($pdo); ?></select></td>';
+            html += '<td><input type="number" min=0 max=10 name="item_quantity[]" class="form-control item_quantity" onkeyup=compute_sales() /></td>';
+            html += '<td><input type="text" name="item_amount[]" class="form-control item_amount" id=item_amount readonly="readonly"/></td>';
+            html += '<td><input type="number" min="0" value="0" step="0.01" name="item_discount[]" class="form-control item_discount" onkeyup=compute_sales() pattern="^\d+(?:\.\d{1,2})?$"/></td>';
+            html += '<td><input type="text" name="item_total[]" class="form-control item_total" readonly="readonly"/></td>';
+            html += '<td><button type="button" name="remove" class="btn btn-danger btn-sm remove"><span class="glyphicon glyphicon-trash"></span></button></td></tr>';
+            $('#item_table').append(html);
+        });
+
+        $(document).on('click', '.remove', function(){
+            $(this).closest('tr').remove();
+            compute_sales();
+        });
+
+
+        $('#insert_form').on('submit', function(event){
+            event.preventDefault();
+            var error = '';
+            $('.services').each(function(){
+                var count = 1;
+                if($(this).val() == '') {
+                    error += "<p>Select Service at "+count+" Row</p>";
+                    return false;
+                }
+                count = count + 1;
+            });
+
+            $('.specialists').each(function(){
+                var count = 1;
+
+                if($(this).val() == '') {
+                    error += "<p>Select Specialist at "+count+" Row</p>";
+                    return false;
+                }
+                count = count + 1;
+            });
+
+            $('.item_quantity').each(function(){
+                var count = 1;
+                if($(this).val() == '') {
+                    error += "<p>Enter Item Quantity at "+count+" Row</p>";
+                    return false;
+                }
+                count = count + 1;
+            });
+
+            $('.due_amount').each(function(){
+                if($(this).val() > 0) {
+                    error += "<p>Amount due must be equal to zero</p>";
+                    return false;
+                }
+            });
+
+            var form_data = $(this).serialize();
+            if(error == '') {
+                $.ajax({
+                    url:"insert_sales.php",
+                    method:"POST",
+                    data:form_data,
+                    success:function(data) {
+                        if(data == 'ok') {
+                            $('#item_table').find("tr:gt(0)").remove();
+                            $('#error').html('<div class="alert alert-success">Item Details Saved</div>');
+                        }
+                    }
+                });
+            } else {
+                $('#error').html('<div class="alert alert-danger">'+error+'</div>');
+            }
+        });
+     });
+
+</script>
+<script>
+
+</script>
+<script>
+    function compute_sales() {
+        var mult = 0;
+        var payment = 0;
+        var due = 0;
+        var amount_res = 0;
+
+        $("tr.txtMult").each(function () { 
+            var $val1 = $('.item_discount', this).val();
+            var $val2 = $('.item_quantity', this).val();
+            var $total = parseFloat($val1 * 1) * parseFloat($val2 * 1);
+            var count = 1;
+            // set total for the row
+            $('.item_total', this).val($total);
+            mult += $total;
+        });
+        payment = $('.payment_amount').val();
+        mult += parseFloat($('#others_amount').val() * 1);
+        due = mult - parseFloat(payment)
+        $(".grand_total").val(mult);
+        $(".due_amount").val(due);
+        
+    }
+
+
+</script>
+
+
+
+<script type="text/javascript">
+
+
+function isSession(selector) {
+    var dataString = "product_id="+selector; /* STORE THAT TO A DATA STRING */
+    $.ajax({ /* THEN THE AJAX CALL */
+        type: "POST", /* TYPE OF METHOD TO USE TO PASS THE DATA */
+        url: "ajax/prodinfo.php", /* PAGE WHERE WE WILL PASS THE DATA */
+        data: dataString, /* THE DATA WE WILL BE PASSING */
+        success: function(result){ /* GET THE TO BE RETURNED DATA */
+           // alert('succss'+result);
+            successCallback($("#result").html(result));
+        }
+    });
+  };
+
+function successCallback(returnData) {
+    $('.services').each(function(){
+        if($(this).val() <> '') {
+            var dataString = "product_id="+$('.services', this).val(); /* STORE THAT TO A DATA STRING */
+            $.ajax({ /* THEN THE AJAX CALL */
+                type: "POST", /* TYPE OF METHOD TO USE TO PASS THE DATA */
+                url: "ajax/prodinfo.php", /* PAGE WHERE WE WILL PASS THE DATA */
+                data: dataString, /* THE DATA WE WILL BE PASSING */
+                success: function(result){ /* GET THE TO BE RETURNED DATA */
+                   // alert('succss'+result);
+                    //$('.item_amount', this).html(result);
+                    var amount_res=$.parseJSON(result);
+                    alert(amount_res);
+                    $(".item_amount"+[count]).val(amount_res);
+                }
+            });
+
+
+        }
+    });
+}
+
+</script>
