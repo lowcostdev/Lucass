@@ -16,11 +16,11 @@
     
     $dash3 = $pdo->prepare("SELECT COUNT(*) as totcust
                             FROM (
-                                SELECT DISTINCT customer
-                                FROM sales_hdr
-                                WHERE iscancelled='N'
-                                    AND MONTH(trandate)=MONTH(NOW()) 
-                                    AND YEAR(trandate)=YEAR(NOW())
+                                SELECT *
+                                FROM customers
+                                WHERE MONTH(reg_date)=MONTH(NOW()) 
+                                    AND YEAR(reg_date)=YEAR(NOW())
+                                    AND isduplicate='N'
                                   ) ta ");
     $dash3->execute();
     $result = $dash3->fetch();
@@ -46,14 +46,14 @@
             </div>
             <!-- /.row -->
             <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="panel panel-primary">
+                <div class="col-lg-4 col-md-12">
+                    <div class="panel panel-red">
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-3">
                                     <i class="fa fa-cart-plus fa-5x"></i>
                                 </div>
-                                <div class="col-xs-9 text-right">
+                                <div class="col-xs-9 col-sm-9 text-right">
                                     <div class="huge"><?php echo number_format($totsales, 2); ?></div>
                                     <div>Total Sales</div>
                                 </div>
@@ -69,16 +69,16 @@
                     </div>
                 </div>
                 
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-12">
                     <div class="panel panel-yellow">
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-3">
-                                    <i class="fa fa-area-chart fa-5x"></i>
+                                    <i class="fa fa-chart-bar fa-5x"></i>
                                 </div>
-                                <div class="col-xs-9 text-right">
+                                <div class="col-xs-9 col-sm-9 text-right">
                                     <div class="huge"><?php echo $tottrans; ?></div>
-                                    <div>Total Transactions</div>
+                                    <div>&nbsp;Total Transactions</div>
                                 </div>
                             </div>
                         </div>
@@ -92,14 +92,14 @@
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-12">
                     <div class="panel panel-green">
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-3">
                                     <i class="fa fa-users fa-5x"></i>
                                 </div>
-                                <div class="col-xs-9 text-right">
+                                <div class="col-xs-9 col-sm-9 text-right">
                                     <div class="huge"><?php echo $totcust; ?></div>
                                     <div>New Clients this month</div>
                                 </div>
