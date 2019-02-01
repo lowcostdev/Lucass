@@ -6,9 +6,9 @@
 
 
 <script>
-	$( function() {
-		$( "#datetran" ).datepicker();
-  	} );
+    $( function() {
+        $( "#datetran" ).datepicker();
+    } );
 </script>
 
 <?php
@@ -39,9 +39,11 @@ function fill_employee_select_box($pdo) {
 return $output;
 }
 ?>
-<div class="container" style="background-color:#f2f2f2">
-	<h3>Invoice</h3>
-	<br>
+ <div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Quick Sale</h1>
+    </div>
+                <!-- /.col-lg-12 -->
 </div>
 
 <form method="post" id="insert_form">
@@ -49,39 +51,47 @@ return $output;
     echo "<input type='hidden' name='user_id' value='max'>";
     echo "<input type='hidden' name='branch_cd' value='01'>";
     ?>
-	<div class="table-repsonsive">
-        <div class="form-group col-md-4">
-            <label for="customer">Customer</label>
-            <input class="form-control input-sm" placeholder="Search by Name" name="txtCustomer" size=8 id="customer" required>
+    <div class="table-repsonsive">
+        <div class="row">
+            <div class="form-group col-lg-4 col-md-12 col-12">
+                <label for="customer">Customer</label>
+                <input class="form-control input-sm" placeholder="Search by Name" name="txtCustomer" size=8 id="customer" required>
+                <input type="hidden" name="selectuser_id" size=8 id="selectuser_id">
 
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="defaultCheck1" name="checkNew" checked="checked">
+                    <label class="form-check-label" for="defaultCheck1">
+                        New Tag
+                    </label>
+                </div>
+            </div>
+            <div class="form-group col-lg-4 col-md-12 col-12">
+                <label for="datetran">Date</label>
+                <input class="form-control input-sm" name="txtDateTran" id="datetran" required>
+            </div>
         </div>
-        <div class="form-group col-md-2">
-            <label for="datetran">Date</label>
-            <input class="form-control input-sm" name="txtDateTran" id="datetran" required>
-        </div>
-        <div class="form-group col-md-6">&nbsp;</div>
 
-		<div class="form-group col-md-12"><span id="error"></span></div>
-		<table class="table table-stripped">
+        <div class="form-group"><span id="error" class="col-md-12 col-sm-12 col-lg-12"></span></div>
+        <table class="table table-stripped">
             <tr>
 
             </tr>
-			<tr>
-				<th>SERVICES</th>
-				<th>STAFF</th>
-				<th>QTY</th>
-				<th>AMOUNT</th>
-				<th>DISCOUNT</th>
-				<th>TOTAL</th>
-			</tr>
             <tr>
-                <td width="15%">
+                <th width="150">SERVICES</th>
+                <th width="150">STAFF</th>
+                <th width="80">QTY</th>
+                <th>AMOUNT</th>
+                <th width=5%>DISCOUNT</th>
+                <th>TOTAL</th>
+            </tr>
+            <tr>
+                <td>
                     <select name="services[]" id="services" name="services" class="form-control Services" onchange="get_service_cost()">
                         <option value="">-Services-</option>
                         <?php echo fill_services_select_box($pdo); ?>
                     </select>
                 </td>
-                <td width="15%">
+                <td>
                     <select name="specialists[]" class="form-control specialists">
                         <option value="">-Select-</option>
                         <?php echo fill_employee_select_box($pdo); ?>
@@ -99,6 +109,9 @@ return $output;
                 <td>
                     <input type="text" name="item_total[]" class="form-control item_total" readonly="readonly"/>
                 </td>
+            </tr>
+            <tr>
+                <td colspan="5">&nbsp;</td>
                 <td>
                     <button type="button" name="add" class="btn btn-success btn-sm add">
                         <span class="glyphicon glyphicon-plus"></span>&nbsp;Add Service
@@ -106,43 +119,57 @@ return $output;
                 </td>
             </tr>
         </table>
-        <table class="table table-stripped" id="item_table">
+        <table class="table table-stripped" id="item_table">     
             <tr><tr>
-		</table>
-	</div>
-	<div class="form-group col-md-9"></div>
-	<div class="form-group col-md-3">
-		<input type="submit" class="btn btn-default" value="Close" />
-		<input type="submit" name="submit" class="btn btn-info" value="Save" />
-	</div>
-    <div class="form-group col-md-3">
-        <label for="extra">Extra Charges/ Other(s)</label>
-        <input type="number" step="0.5" class="form-control input-sm others_amount" id="others_amount" name="others_amount" value="0.00" onkeyup="compute_total()">
+        </table>
     </div>
-</form>
+    
+    <div class="row">
+        <div class="col-12 col-sm-5"></div>
+        <div class="col-12 col-sm-3">
+            Other Charges
+        </div>
+        <div class="col-12 col-sm-4">
+            <input type="number" step="0.5" class="form-control input-sm others_amount" id="others_amount" name="others_amount" value="0.00" onkeyup="compute_total()">&nbsp;
+        </div>
+    </div>
 
-<hr class="col-xs-12">
-<div class="form-group col-md-7">&nbsp;</div>
-<div class="form-group col-md-2">
-	<label for="extra">Grand Total</label>
-</div>
-<div class="form-group col-md-3">
-	<input class="form-control input-lg grand_total" name="grand_total" style="text-align:right;" readonly="readonly">
-</div>
-<div class="form-group col-md-7">&nbsp;</div>
-<div class="form-group col-md-2">
-	<label for="extra">Paying Now</label>
-</div>
-<div class="form-group col-md-3">
-	<input class="form-control input-lg payment_amount" style="text-align:right;" type="number" step="0.1" name="payment_amount" value="0.00" onkeyup="compute_total();">
-</div>
-<div class="form-group col-md-7">&nbsp;</div>
-<div class="form-group col-md-2">
-	<label for="extra">Due Amount/Change</label>
-</div>
-<div class="form-group col-md-3">
-	<input class="form-control input-lg due_amount" style="text-align:right;" readonly="readonly">
-</div>
+    <div class="row">
+        <div class="col-12 col-sm-5"></div>
+        <div class="col-12 col-sm-3">
+            Grand Total
+        </div>
+        <div class="col-12 col-sm-4">
+            <input class="form-control input-lg grand_total" name="grand_total" style="text-align:right;" readonly="readonly">&nbsp;
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-sm-5"></div>
+        <div class="col-12 col-sm-3">
+            Paying Now
+        </div>
+        <div class="col-12 col-sm-4">
+            <input class="form-control input-lg payment_amount" style="text-align:right;" type="number" step="0.1" name="payment_amount" value="0.00" onkeyup="compute_total();">&nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-sm-5"></div>
+        <div class="col-12 col-sm-3">
+            Due Amount
+        </div>
+        <div class="col-12 col-sm-4">
+            <input class="form-control input-lg due_amount" style="text-align:right;" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="col-9">&nbsp;</div>
+    <div class="col">
+        <input type="submit" class="btn btn-default" value="Close" />
+        <input type="submit" name="submit" class="btn btn-info" value="Save" />
+    </div>
+
+</form>
 
 <script>
     $(document).ready(function() {
@@ -177,7 +204,7 @@ return $output;
                 html += '<input type="hidden" name="item_amt[]" value='+ $('.item_amount').val() + ' />';
                 html += '<input type="hidden" name="item_disc[]" value='+ $('.item_discount').val() + ' />';
                 html += '<input type="hidden" name="total1[]" class="sum" value='+ $('.item_total').val() + ' />';
-                html += '<td><button type="button" name="remove" class="btn btn-danger btn-sm remove" onclick=compute_total() ><span class="glyphicon glyphicon-trash"></span></button></td></tr>';
+                html += '<td><button type="button" name="remove" class="btn btn-danger btn-sm remove" onclick=compute_total() ><span class="fa fa-trash-alt"></span></button></td></tr>';
                 $('#item_table').append(html);
                 $('#error').html('<div></div>');
                 compute_total();
@@ -314,7 +341,7 @@ function get_service_cost() {
             },
             select: function (event, ui) {
                 $('#customer').val(ui.item.label); // display the selected text
-                //$('#selectuser_id').val(ui.item.value); // save selected id to input
+                $('#selectuser_id').val(ui.item.value); // save selected id to input
                 return false;
             }
         });

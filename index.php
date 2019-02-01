@@ -9,6 +9,7 @@ include "header.php";
 if($page==="index") {
 	$page="home";
 } 
+
 include_once "$page" . ".php";
 
 include "footer.php";

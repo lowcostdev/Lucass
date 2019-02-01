@@ -12,6 +12,7 @@ if(isset($_POST["branch_cd"])) {
     $err = "";
     try {
         $pdo->beginTransaction(); 
+        
         $invoice = $pdo->prepare("INSERT INTO sales_hdr (invoice_no, branch_cd, serv_date, customer, other_amount, user_id) 
                                   VALUES (:invoice_no, :branch_cd, :serv_date, :customer, :other_amount, :user_id)");
         $invoice->execute(
@@ -32,14 +33,21 @@ if(isset($_POST["branch_cd"])) {
             $statement->execute(
                               array('invoice_no' => $nextNo,
                                     ':branch_cd' => $_POST["branch_cd"], 
-                                    ':item_srv'  => $_POST["item_srv"][$count], 
-                                    ':item_emp'  => $_POST["item_emp"][$count], 
+                                    ':item_srv' => $_POST["item_srv"][$count], 
+                                    ':item_emp' => $_POST["item_emp"][$count], 
                                     ':item_amt' => $_POST["item_amt"][$count], 
                                     ':item_qty' => $_POST["item_qty"][$count], 
-                                    ':item_disc'  => $_POST["item_disc"][$count]
+                                    ':item_disc' => $_POST["item_disc"][$count]
                                   )
                                 );
         } 
+
+        //Create New client
+        if(isset($_POST["checkNew"])) {
+             $statement = $pdo->prepare("INSERT INTO customers (cust_name) VALUES (:cust_name)");
+             $statement->execute(array(':cust_name' => $_POST["txtCustomer"]));
+        }
+
         $pdo->commit();
         $result = $statement->fetchAll();
     } catch (Exception $e) {
