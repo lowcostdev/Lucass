@@ -31,7 +31,7 @@
 
             <ul class="list-unstyled components">
                 <li class="active">
-                    <a href="/core">
+                    <a href="/Lucass">
                         <i class="fas fa-home"></i>
                         Home
                     </a>
