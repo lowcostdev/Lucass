@@ -2,7 +2,7 @@
 <?php
     
     //1st Part
-    $dash12 = $pdo->prepare("SELECT SUM(ta.item_amount * item_qty) - SUM(item_disc)  + tb.other_amount as totsales, COUNT(*) as tottrans
+    $dash12 = $pdo->prepare("SELECT SUM(ta.item_amount * item_qty) - SUM(item_disc)  + max(tb.other_amount) as totsales, COUNT(*) as tottrans
                             FROM sales_dtl ta 
                             JOIN sales_hdr tb ON ta.invoice_no = tb.invoice_no
                                 AND ta.branch_cd = tb.branch_cd
