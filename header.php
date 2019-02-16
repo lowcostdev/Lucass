@@ -1,3 +1,6 @@
+<?php
+    $branch_cd = '01';
+?>
 <!DOCTYPE html>
 <html>
 
@@ -6,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Collapsible sidebar using Bootstrap 4</title>
+    <title>Lukkas - Salon Management System</title>
 
     <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
@@ -31,7 +34,7 @@
 
             <ul class="list-unstyled components">
                 <li class="active">
-                    <a href="/Lucass">
+                    <a href="/core">
                         <i class="fas fa-home"></i>
                         Home
                     </a>
@@ -51,13 +54,13 @@
                     </a>
                     <ul class="collapse list-unstyled" id="pageSubmenu">
                         <li>
-                            <a href="#">Services</a>
+                            <a href="?page=services&serv_tag=1">Services</a>
                         </li>
                         <li>
-                            <a href="#">Products</a>
+                            <a href="?page=services&serv_tag=2">Products</a>
                         </li>
                         <li>
-                            <a href="#">Staff</a>
+                            <a href="?page=staffs">Staff</a>
                         </li>
                     </ul>
                 </li>

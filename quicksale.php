@@ -6,9 +6,9 @@
 
 
 <script>
-    $( function() {
-        $( "#datetran" ).datepicker();
-    } );
+	$( function() {
+		$( "#datetran" ).datepicker();
+  	} );
 </script>
 
 <?php
@@ -28,7 +28,7 @@ return $output;
 
 function fill_employee_select_box($pdo) {
     $output = '';
-    $query = "SELECT * FROM employee_master";
+    $query = "SELECT * FROM employee_master WHERE isactive='Y'";
     $statement = $pdo->prepare($query);
     $statement->execute();
     $result = $statement->fetchAll();
@@ -49,9 +49,9 @@ return $output;
 <form method="post" id="insert_form">
     <?php
     echo "<input type='hidden' name='user_id' value='max'>";
-    echo "<input type='hidden' name='branch_cd' value='01'>";
+    echo "<input type='hidden' name='branch_cd' value='$branch_cd'>";
     ?>
-    <div class="table-repsonsive">
+	<div class="table-repsonsive">
         <div class="row">
             <div class="form-group col-lg-4 col-md-12 col-12">
                 <label for="customer">Customer</label>
@@ -71,19 +71,19 @@ return $output;
             </div>
         </div>
 
-        <div class="form-group"><span id="error" class="col-md-12 col-sm-12 col-lg-12"></span></div>
-        <table class="table table-stripped">
+		<div class="form-group"><span id="error" class="col-md-12 col-sm-12 col-lg-12"></span></div>
+		<table class="table table-stripped">
             <tr>
 
             </tr>
-            <tr>
-                <th width="150">SERVICES</th>
-                <th width="150">STAFF</th>
-                <th width="80">QTY</th>
-                <th>AMOUNT</th>
-                <th width=5%>DISCOUNT</th>
-                <th>TOTAL</th>
-            </tr>
+			<tr>
+				<th width="150">SERVICES</th>
+				<th width="150">STAFF</th>
+				<th width="80">QTY</th>
+				<th>AMOUNT</th>
+				<th width=5%>DISCOUNT</th>
+				<th>TOTAL</th>
+			</tr>
             <tr>
                 <td>
                     <select name="services[]" id="services" name="services" class="form-control Services" onchange="get_service_cost()">
@@ -121,8 +121,8 @@ return $output;
         </table>
         <table class="table table-stripped" id="item_table">     
             <tr><tr>
-        </table>
-    </div>
+		</table>
+	</div>
     
     <div class="row">
         <div class="col-12 col-sm-5"></div>
@@ -163,11 +163,11 @@ return $output;
         </div>
     </div>
 
-    <div class="col-9">&nbsp;</div>
-    <div class="col">
-        <input type="submit" class="btn btn-default" value="Close" />
-        <input type="submit" name="submit" class="btn btn-info" value="Save" />
-    </div>
+	<div class="col-9">&nbsp;</div>
+	<div class="col">
+		<input type="submit" class="btn btn-default" value="Close" />
+		<input type="submit" name="submit" class="btn btn-info" value="Save" />
+	</div>
 
 </form>
 

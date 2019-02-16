@@ -20,6 +20,7 @@
 			<th>ADDRESS</th>
 			<th>CITY</th>
 			<th>CONTACT NO</th>
+			<th></th>
 		</tr>
 		<?php
 		foreach($result as $rows) {
@@ -30,6 +31,7 @@
 				      <td>$rows[cust_address]</td>
 				      <td>$rows[cust_city]</td>
 				      <td>$rows[mobileno]</td>
+				      <td>$rows[reg_date]</td>
 				  </tr>";
 		}
 
